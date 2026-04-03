@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // データ構造の初期化
     let kpiData = [];
-    const STORAGE_KEY = 'wafu_kpi_tracker_v1';
+    const STORAGE_KEY = 'wafu_kpi_tracker_v3_april'; // データをリセットして4月始まりを強制
 
     let mediaNames = {
         media1: 'インスタグラム',
@@ -99,12 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
         webhookUrlInput.value = appSettings.webhookUrl;
     }
 
-    // 空のデータ12ヶ月分を作成
+    // 空のデータ12ヶ月分を作成（4月始まり）
     function initEmptyData() {
         kpiData = [];
-        for (let i = 1; i <= 12; i++) {
+        const months = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
+        months.forEach(m => {
             kpiData.push({
-                month: i,
+                month: m,
                 instaTotal: '',
                 instaInc: '',
                 threadsTotal: '',
@@ -119,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 consults: '',
                 contracts: ''
             });
-        }
+        });
     }
 
     // 計算ロジック
