@@ -247,7 +247,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 褒め言葉の吹き出しを表示する関数
     function showPraiseTooltip(targetElement) {
         // 褒め言葉のバリエーション
-        const praises = ["すごい！🌸", "頑張ったね！✨", "素晴らしい！🎉", "さすがです！💕", "いい調子！😊"];
+        const praises = [
+            "すごい！🌸", "頑張ったね！✨", "素晴らしい！🎉", "さすがです！💕", "いい調子！😊",
+            "天才かも！💖", "その調子！📈", "成長してるね！🌱", "パーフェクト！🌟", "才能の塊！🤩",
+            "限界突破！🔥", "数字が伸びてる！🙌", "このまま行こう！🚀", "最高です！👑", "エクセレント！💎",
+            "努力の賜物！✨", "圧倒的成長！💪", "絶好調だね！😆", "神がかってます！👼", "止まらないね！💨"
+        ];
         const randomPraise = praises[Math.floor(Math.random() * praises.length)];
 
         const tooltip = document.createElement('div');
