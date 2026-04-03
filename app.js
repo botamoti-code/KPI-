@@ -97,8 +97,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 appSettings = { ...appSettings, ...JSON.parse(storedSettings) };
             } catch (e) {}
         }
+
+        // URLパラメータからの招待リンク自動設定
+        const urlParams = new URLSearchParams(window.location.search);
+        const hookUrl = urlParams.get('hook');
+        if (hookUrl) {
+            appSettings.webhookUrl = hookUrl;
+            localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(appSettings));
+            // 画面をスッキリさせるため、URLからクエリパラメータをこっそり消去する
+            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({path: cleanUrl}, '', cleanUrl);
+        }
+
         clientNameInput.value = appSettings.clientName || '';
-        webhookUrlInput.value = appSettings.webhookUrl || '';
+        if (webhookUrlInput) {
+            webhookUrlInput.value = appSettings.webhookUrl || '';
+        }
         currentGoalInput.value = appSettings.currentGoal || '';
     }
 
@@ -356,15 +370,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 設定とデータ提出ロジック
     function saveSettings() {
-        appSettings.clientName = clientNameInput.value;
-        appSettings.webhookUrl = webhookUrlInput.value;
-        appSettings.currentGoal = currentGoalInput.value;
+        if (clientNameInput) appSettings.clientName = clientNameInput.value;
+        if (webhookUrlInput) appSettings.webhookUrl = webhookUrlInput.value;
+        if (currentGoalInput) appSettings.currentGoal = currentGoalInput.value;
         localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(appSettings));
     }
 
-    clientNameInput.addEventListener('input', saveSettings);
-    webhookUrlInput.addEventListener('input', saveSettings);
-    currentGoalInput.addEventListener('input', saveSettings);
+    if (clientNameInput) clientNameInput.addEventListener('input', saveSettings);
+    if (webhookUrlInput) webhookUrlInput.addEventListener('input', saveSettings);
+    if (currentGoalInput) currentGoalInput.addEventListener('input', saveSettings);
 
     submitAdminBtn.addEventListener('click', async () => {
         saveData(false);
