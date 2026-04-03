@@ -135,7 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 lineInc: '',
                 videoViews: '',
                 consults: '',
-                contracts: ''
+                contracts: '',
+                sales: ''
             });
         });
     }
@@ -198,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="col-percent"><input type="text" readonly value="${rates.consultRate}%"></td>
                 <td><input type="number" data-index="${index}" data-field="contracts" value="${row.contracts || ''}"></td>
                 <td class="col-percent"><input type="text" readonly value="${rates.contractRate}%"></td>
+                <td><input type="number" data-index="${index}" data-field="sales" value="${row.sales || ''}"></td>
             `;
             tableBody.appendChild(tr);
         });

@@ -253,6 +253,7 @@ th {
 .group-video { border-bottom: 2px solid #A8C2E8; }
 .group-consult { border-bottom: 2px solid #E8D3A8; }
 .group-contract { border-bottom: 2px solid #C7A8E8; }
+.group-sales { border-bottom: 2px solid #F8C8A8; } /* サーモンピンク〜オレンジ系 */
 
 /* 自由入力ヘッダー */
 .header-input {
