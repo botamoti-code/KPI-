@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI管理ツール</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-texture"></div>
+
+    <div class="container">
+        <header>
+            <h1 class="title">KPI数値管理表</h1>
+            <p class="subtitle">あなただけのビジネス数値を記録し、自動でコンバージョン率を算出します。</p>
+        </header>
+
+        <div class="controls">
+            <button id="save-btn" class="primary-btn">データを保存する</button>
+            <button id="export-btn" class="secondary-btn">CSV出力(バックアップ)</button>
+            <button id="import-btn" class="secondary-btn">CSV読込</button>
+            <input type="file" id="import-file" accept=".csv" style="display:none">
+            <button id="clear-btn" class="danger-btn">データをリセット</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="kpi-table">
+                <thead>
+                    <tr>
+                        <th class="sticky-col">月</th>
+                        <th colspan="2" class="group-insta">Instagram</th>
+                        <th colspan="3" class="group-line">LINE登録</th>
+                        <th colspan="2" class="group-video">動画視聴</th>
+                        <th colspan="2" class="group-consult">個別相談</th>
+                        <th colspan="2" class="group-contract">成約</th>
+                    </tr>
+                    <tr class="sub-headers">
+                        <th class="sticky-col"></th>
+                        <th>累計</th>
+                        <th>増加数</th>
+                        <th>累計</th>
+                        <th>増加数</th>
+                        <th class="col-percent">% 登録率</th>
+                        <th>視聴数</th>
+                        <th class="col-percent">% 視聴率</th>
+                        <th>相談数</th>
+                        <th class="col-percent">% 相談率</th>
+                        <th>成約数</th>
+                        <th class="col-percent">% 成約率</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- JavaScriptで12ヶ月分を生成 -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="toast" class="toast">保存しました</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
