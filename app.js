@@ -568,4 +568,84 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem(MEDIA_STORAGE_KEY, JSON.stringify(mediaNames));
         });
     });
+
+    // -----------------------------------------
+    // 運営者用（管理者）メニューの制御
+    // -----------------------------------------
+    const showAdminBtn = document.getElementById('show-admin-login-btn');
+    const adminPanel = document.getElementById('admin-secret-panel');
+    const adminWebhookUrlInput = document.getElementById('admin-webhook-url');
+    const adminGenerateBtn = document.getElementById('generate-btn');
+    const shareArea = document.getElementById('share-area');
+    const shareUrlText = document.getElementById('share-url-text');
+
+    if (showAdminBtn) {
+        showAdminBtn.addEventListener('click', () => {
+            // すでに開いている場合は閉じる
+            if (adminPanel.style.display === 'block') {
+                adminPanel.style.display = 'none';
+                showAdminBtn.textContent = '運営者用メニューを開く';
+                return;
+            }
+
+            // パスワードの入力要求
+            const password = prompt('運営者用パスワードを入力してください:');
+            if (password === 'admin') {
+                // パスワード正解
+                adminPanel.style.display = 'block';
+                showAdminBtn.textContent = '運営者用メニューを閉じる';
+                // 既存の保存済み設定があれば表示
+                const storedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+                if (storedSettings) {
+                    try {
+                        const settings = JSON.parse(storedSettings);
+                        if (settings.webhookUrl) {
+                            adminWebhookUrlInput.value = settings.webhookUrl;
+                        }
+                    } catch (e) {}
+                }
+            } else if (password !== null) {
+                // キャンセル以外で不正解の場合
+                alert('パスワードが違います。');
+            }
+        });
+    }
+
+    if (adminGenerateBtn) {
+        adminGenerateBtn.addEventListener('click', () => {
+            const hookUrl = adminWebhookUrlInput.value.trim();
+            if (!hookUrl) {
+                alert('Webhook URLを入力してください。');
+                return;
+            }
+
+            // 現在のURL（index.html）をベースに招待リンクを生成
+            let baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            const inviteUrl = `${baseUrl}?hook=${encodeURIComponent(hookUrl)}`;
+
+            // UIに表示
+            shareUrlText.textContent = inviteUrl;
+            shareArea.style.display = 'block';
+
+            // クリップボードにコピー
+            navigator.clipboard.writeText(inviteUrl).then(() => {
+                displayToast('招待用URLをコピーしました！');
+            }).catch(err => {
+                console.error('コピー失敗', err);
+                displayToast('コピーに失敗しました。手動でコピーしてください。');
+            });
+            
+            // ついでに管理者のブラウザにも設定を保存しておく
+            let settings = { clientName: '', webhookUrl: hookUrl, currentGoal: '' };
+            const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
+            if (stored) {
+                try {
+                    settings = { ...JSON.parse(stored), webhookUrl: hookUrl };
+                } catch(e) {}
+            }
+            localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+            // 変数も更新
+            appSettings.webhookUrl = hookUrl;
+        });
+    }
 });
