@@ -373,27 +373,66 @@ tbody tr:hover {
 /* レスポンシブ */
 @media (max-width: 768px) {
     body {
-        padding: 20px 10px;
+        padding: 10px 5px;
     }
     
     .container {
-        padding: 20px 10px;
+        padding: 15px 10px;
+        border-radius: 12px;
     }
     
     .title {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    .tabs {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-bottom: 15px;
+    }
+
+    .tab-btn {
+        font-size: 0.95rem;
+        padding: 8px 14px;
+        flex: 1 1 30%; /* スマホなら均等に並べるか折り返す */
+        text-align: center;
     }
     
     .controls {
-        justify-content: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .controls button {
+        flex: 1 1 45%; /* スマホでボタンを横並び2列にしやすくする */
+        font-size: 0.85rem;
+        padding: 10px;
     }
     
     th, td {
-        padding: 8px 6px;
-        font-size: 0.9rem;
+        padding: 8px 4px; /* 極力余白を削る */
+        font-size: 0.85rem;
     }
+
     td input {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        padding: 6px 4px;
+        min-width: 60px; /* 小さすぎると見えないので最低幅 */
+    }
+
+    .header-input {
+        font-size: 0.85rem;
+        padding: 2px;
+    }
+    
+    .sub-headers th {
+        font-size: 0.75rem;
     }
 }
 
