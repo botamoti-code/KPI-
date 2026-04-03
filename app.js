@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputs = tableBody.querySelectorAll('input:not([readonly])');
         inputs.forEach(input => {
             input.addEventListener('input', (e) => {
-                const index = e.target.getAttribute('data-index');
+                const index = parseInt(e.target.getAttribute('data-index'));
                 const field = e.target.getAttribute('data-field');
                 kpiData[index][field] = e.target.value;
                 
@@ -211,7 +211,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 自動保存
                 saveData(false);
             });
+
+            // 褒め言葉の判定（フォーカスが外れた時＝値が確定した時）
+            input.addEventListener('change', (e) => {
+                const index = parseInt(e.target.getAttribute('data-index'));
+                const field = e.target.getAttribute('data-field');
+                const currentValue = parseFloat(e.target.value);
+                
+                // 1行目（4月）は比較先の「先月」がないのでスキップ
+                if (index > 0) {
+                    const prevValue = parseFloat(kpiData[index - 1][field]);
+                    // 先月より数字が増えていたら褒める！
+                    if (!isNaN(currentValue) && !isNaN(prevValue) && currentValue > prevValue) {
+                        showPraiseTooltip(e.target);
+                    }
+                }
+            });
         });
+    }
+
+    // 褒め言葉の吹き出しを表示する関数
+    function showPraiseTooltip(targetElement) {
+        // 褒め言葉のバリエーション
+        const praises = ["すごい！🌸", "頑張ったね！✨", "素晴らしい！🎉", "さすがです！💕", "いい調子！😊"];
+        const randomPraise = praises[Math.floor(Math.random() * praises.length)];
+
+        const tooltip = document.createElement('div');
+        tooltip.className = 'praise-tooltip';
+        tooltip.textContent = randomPraise;
+
+        // セル（td）の相対位置に配置するために、親tdにpositionを設定
+        const parentTd = targetElement.closest('td');
+        if (parentTd) {
+            parentTd.style.position = 'relative';
+            parentTd.appendChild(tooltip);
+
+            // アニメーションのため少し遅れて表示
+            requestAnimationFrame(() => {
+                tooltip.classList.add('show');
+            });
+
+            // 約1.5秒後に消す
+            setTimeout(() => {
+                tooltip.classList.remove('show');
+                setTimeout(() => {
+                    tooltip.remove();
+                }, 300); // fadeOutアニメーションの時間待つ
+            }, 1500);
+        }
     }
 
     function updateRowDisplay(index, updateFn) {
