@@ -28,18 +28,31 @@ function doPost(e) {
       kpiSheet = ss.insertSheet(kpiSheetName);
     }
     
-    // シートの中身をクリアしてヘッダーを書き込む
+    // シートの中身をクリア
     kpiSheet.clear();
+
+    // 現在の目標があれば最上部に記載
+    if (payload.currentGoal) {
+      kpiSheet.getRange("A1").setValue("現在の目標");
+      kpiSheet.getRange("B1").setValue(payload.currentGoal);
+      kpiSheet.getRange("A1").setBackground("#ffe0e5").setFontWeight("bold");
+      // 下に空行をあけるためのダミー行
+      kpiSheet.getRange("A2").setValue("");
+    }
+
     var headers = [
       "月", 
       title(mediaNames.media1) + "累計", title(mediaNames.media1) + "増加数", 
       title(mediaNames.media2) + "累計", title(mediaNames.media2) + "増加数", 
       title(mediaNames.media3) + "累計", title(mediaNames.media3) + "増加数", 
       title(mediaNames.media4) + "累計", title(mediaNames.media4) + "増加数", 
-      "LINE登録累計", "LINE登録増加数", "動画視聴数", "個別相談数", "成約数"
+      "LINE登録累計", "LINE登録増加数", "動画視聴数", "個別相談数", "成約数", "売上(円)"
     ];
     kpiSheet.appendRow(headers);
-    kpiSheet.getRange(1, 1, 1, headers.length).setBackground("#f2b3b7").setFontWeight("bold");
+    
+    // ヘッダー行の色と太字を設定 (追加した最新の行になす)
+    var headerRowIndex = kpiSheet.getLastRow();
+    kpiSheet.getRange(headerRowIndex, 1, 1, headers.length).setBackground("#f2b3b7").setFontWeight("bold");
     
     // KPIデータを追記
     kpiData.forEach(function(row) {
@@ -50,7 +63,7 @@ function doPost(e) {
         row.youtubeTotal, row.youtubeInc,
         row.otherTotal, row.otherInc,
         row.lineTotal, row.lineInc,
-        row.videoViews, row.consults, row.contracts
+        row.videoViews, row.consults, row.contracts, row.sales
       ]);
     });
     
