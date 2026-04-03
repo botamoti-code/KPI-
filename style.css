@@ -541,3 +541,32 @@ tbody tr:hover {
     border-color: #ffb3c1;
     box-shadow: 0 0 0 3px rgba(255, 179, 193, 0.2);
 }
+
+/* 現在の目標エリア デザイン */
+.goal-container {
+    background-color: #fff;
+    border: 2px dashed #f7d2d9;
+    border-radius: 12px;
+    padding: 15px 20px;
+}
+
+.goal-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--text-color);
+    resize: vertical;
+    outline: none;
+    transition: 0.3s;
+    background-color: #fafafa;
+}
+
+.goal-textarea:focus {
+    background-color: #fff;
+    border-color: #ffb3c1;
+    box-shadow: 0 0 0 3px rgba(255, 179, 193, 0.2);
+}

@@ -25,15 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const memoContainer = document.getElementById('memo-container');
     const addMemoBtn = document.getElementById('add-memo-btn');
 
-    // 設定管理用
+    // 設定管理・現在の目標用
     const SETTINGS_STORAGE_KEY = 'wafu_kpi_settings_v1';
     let appSettings = {
         clientName: '',
-        webhookUrl: ''
+        webhookUrl: '',
+        currentGoal: ''
     };
     const clientNameInput = document.getElementById('client-name');
     const webhookUrlInput = document.getElementById('webhook-url');
     const submitAdminBtn = document.getElementById('submit-admin-btn');
+    const currentGoalInput = document.getElementById('current-goal');
 
     // タブ切り替え制御
     const tabBtns = document.querySelectorAll('.tab-btn');
@@ -95,8 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 appSettings = { ...appSettings, ...JSON.parse(storedSettings) };
             } catch (e) {}
         }
-        clientNameInput.value = appSettings.clientName;
-        webhookUrlInput.value = appSettings.webhookUrl;
+        clientNameInput.value = appSettings.clientName || '';
+        webhookUrlInput.value = appSettings.webhookUrl || '';
+        currentGoalInput.value = appSettings.currentGoal || '';
     }
 
     // 空のデータ12ヶ月分を作成（4月始まり）
@@ -308,11 +311,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveSettings() {
         appSettings.clientName = clientNameInput.value;
         appSettings.webhookUrl = webhookUrlInput.value;
+        appSettings.currentGoal = currentGoalInput.value;
         localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(appSettings));
     }
 
     clientNameInput.addEventListener('input', saveSettings);
     webhookUrlInput.addEventListener('input', saveSettings);
+    currentGoalInput.addEventListener('input', saveSettings);
 
     submitAdminBtn.addEventListener('click', async () => {
         saveData(false);
@@ -335,6 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const payload = {
             clientName: appSettings.clientName,
             timestamp: new Date().toISOString(),
+            currentGoal: appSettings.currentGoal,
             kpiData: kpiData,
             memoData: memoData,
             mediaNames: mediaNames
