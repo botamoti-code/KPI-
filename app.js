@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveData(false);
             });
 
-            // 褒め言葉の判定（フォーカスが外れた時＝値が確定した時）
+            // 褒め言葉・励ましの判定（フォーカスが外れた時＝値が確定した時）
             input.addEventListener('change', (e) => {
                 const index = parseInt(e.target.getAttribute('data-index'));
                 const field = e.target.getAttribute('data-field');
@@ -235,29 +235,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 1行目（4月）は比較先の「先月」がないのでスキップ
                 if (index > 0) {
                     const prevValue = parseFloat(kpiData[index - 1][field]);
-                    // 先月より数字が増えていたら褒める！
-                    if (!isNaN(currentValue) && !isNaN(prevValue) && currentValue > prevValue) {
-                        showPraiseTooltip(e.target);
+                    if (!isNaN(currentValue) && !isNaN(prevValue)) {
+                        if (currentValue > prevValue) {
+                            // 先月より増えていたら褒める
+                            showFeedbackTooltip(e.target, 'praise');
+                        } else if (currentValue < prevValue) {
+                            // 先月より下がっていたら励ます
+                            showFeedbackTooltip(e.target, 'encourage');
+                        }
                     }
                 }
             });
         });
     }
 
-    // 褒め言葉の吹き出しを表示する関数
-    function showPraiseTooltip(targetElement) {
-        // 褒め言葉のバリエーション
-        const praises = [
-            "すごい！🌸", "頑張ったね！✨", "素晴らしい！🎉", "さすがです！💕", "いい調子！😊",
-            "天才かも！💖", "その調子！📈", "成長してるね！🌱", "パーフェクト！🌟", "才能の塊！🤩",
-            "限界突破！🔥", "数字が伸びてる！🙌", "このまま行こう！🚀", "最高です！👑", "エクセレント！💎",
-            "努力の賜物！✨", "圧倒的成長！💪", "絶好調だね！😆", "神がかってます！👼", "止まらないね！💨"
-        ];
-        const randomPraise = praises[Math.floor(Math.random() * praises.length)];
+    // 吹き出しを表示する関数 (種類: 'praise' または 'encourage')
+    function showFeedbackTooltip(targetElement, type) {
+        let messages = [];
+        let bgColor = '#ffb3c1'; // デフォルトはピンク(増えた時用)
+
+        if (type === 'praise') {
+            messages = [
+                "すごい！🌸", "頑張ったね！✨", "素晴らしい！🎉", "さすがです！💕", "いい調子！😊",
+                "天才かも！💖", "その調子！📈", "成長してるね！🌱", "パーフェクト！🌟", "才能の塊！🤩",
+                "限界突破！🔥", "数字が伸びてる！🙌", "このまま行こう！🚀", "最高です！👑", "エクセレント！💎",
+                "努力の賜物！✨", "圧倒的成長！💪", "絶好調だね！😆", "神がかってます！👼", "止まらないね！💨"
+            ];
+        } else if (type === 'encourage') {
+            // 下がった時の励ましバリエーション
+            messages = [
+                "また頑張ろうね！🍀", "焦らずいこう！🐌", "こんな月もあるよ☕️", "次に期待！🌟", "一休みして次へ！🍵",
+                "ここから挽回！✊", "継続が大事！🌷", "マイペースでOK！🦥", "次はきっと伸びる！🎈"
+            ];
+            bgColor = '#90cdf4'; // 下がった時は少し落ち着いた水色などに変更
+        }
+
+        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
 
         const tooltip = document.createElement('div');
         tooltip.className = 'praise-tooltip';
-        tooltip.textContent = randomPraise;
+        tooltip.textContent = randomMsg;
+        tooltip.style.backgroundColor = bgColor;
+        
+        // 吹き出しの尻尾の色も合わせるためのインライン追加スタイル要素
+        const tailStyle = document.createElement('style');
+        const uniqueId = 'tooltip-' + Math.random().toString(36).substr(2, 9);
+        tooltip.id = uniqueId;
+        tailStyle.innerHTML = `#${uniqueId}::after { border-color: ${bgColor} transparent transparent transparent; }`;
+        tooltip.appendChild(tailStyle);
 
         // セル（td）の相対位置に配置するために、親tdにpositionを設定
         const parentTd = targetElement.closest('td');
