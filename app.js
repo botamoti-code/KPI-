@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // CSV出力
     exportBtn.addEventListener('click', () => {
         let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // BOM for Excel
-        csvContent += `月,${mediaNames.media1}累計,${mediaNames.media1}増加数,${mediaNames.media2}累計,${mediaNames.media2}増加数,${mediaNames.media3}累計,${mediaNames.media3}増加数,${mediaNames.media4}累計,${mediaNames.media4}増加数,LINE登録累計,LINE登録増加数,動画視聴数,個別相談数,成約数\r\n`;
+        csvContent += `月,${mediaNames.media1}投稿数,${mediaNames.media1}増加数,${mediaNames.media2}投稿数,${mediaNames.media2}増加数,${mediaNames.media3}投稿数,${mediaNames.media3}増加数,${mediaNames.media4}投稿数,${mediaNames.media4}増加数,LINE登録累計,LINE登録増加数,動画視聴数,個別相談数,成約数\r\n`;
         
         kpiData.forEach(row => {
             const r = [

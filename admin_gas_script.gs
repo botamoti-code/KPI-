@@ -58,10 +58,10 @@ function doPost(e) {
     
     var kpiHeaders = [
       "月", 
-      title(mediaNames.media1) + "累計", title(mediaNames.media1) + "増加数", 
-      title(mediaNames.media2) + "累計", title(mediaNames.media2) + "増加数", 
-      title(mediaNames.media3) + "累計", title(mediaNames.media3) + "増加数", 
-      title(mediaNames.media4) + "累計", title(mediaNames.media4) + "増加数", 
+      title(mediaNames.media1) + "投稿数", title(mediaNames.media1) + "増加数", 
+      title(mediaNames.media2) + "投稿数", title(mediaNames.media2) + "増加数", 
+      title(mediaNames.media3) + "投稿数", title(mediaNames.media3) + "増加数", 
+      title(mediaNames.media4) + "投稿数", title(mediaNames.media4) + "増加数", 
       "LINE登録累計", "LINE登録増加数", "動画視聴数", "個別相談数", "成約数", "売上(円)"
     ];
     sheet.appendRow(kpiHeaders);
