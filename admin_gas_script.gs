@@ -138,3 +138,55 @@ function doPost(e) {
 function title(name) {
   return name ? name : "不明メディア";
 }
+
+// ============================================
+// 【新機能】クライアントデータの取得 (doGet)
+// 管理者メニューからダッシュボードを開いたとき、
+// JSONP方式で全カルテ情報を返します。
+// ============================================
+function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets();
+  var allClientsData = [];
+
+  for (var i = 0; i < sheets.length; i++) {
+    var sheet = sheets[i];
+    var sheetName = sheet.getName();
+    
+    // 「カルテ: 」から始まるシートだけを抽出
+    if (sheetName.indexOf("カルテ: ") === 0) {
+      // データが存在するすべての範囲を取得（2D配列）
+      var dataRange = sheet.getDataRange();
+      var values = dataRange.getValues();
+      
+      // クライアント名などの基本情報を抜き出す
+      var clientName = sheetName.replace("カルテ: ", "");
+      var currentGoal = "未設定";
+      var lastUpdated = "";
+      
+      // 2〜4行目に基本情報が書かれている前提で探す
+      for (var row = 0; row < Math.min(values.length, 10); row++) {
+        if (values[row][0] === "現在の目標：") currentGoal = values[row][1];
+        if (values[row][0] === "最終更新日時：") lastUpdated = values[row][1];
+      }
+      
+      allClientsData.push({
+        id: "client_" + i,
+        clientName: clientName,
+        currentGoal: currentGoal,
+        lastUpdated: lastUpdated,
+        sheetData: values // 描画用の生データも全て渡す
+      });
+    }
+  }
+
+  // JSONP形式での返却 (クライアントのコールバック関数を呼び出す形)
+  var callback = e.parameter.callback || "callback";
+  var resultJson = JSON.stringify({
+    status: "success",
+    clients: allClientsData
+  });
+  
+  return ContentService.createTextOutput(callback + '(' + resultJson + ');')
+    .setMimeType(ContentService.MimeType.JAVASCRIPT);
+}

@@ -120,9 +120,30 @@
                     <p style="font-size: 0.8rem; color: var(--primary-color); font-weight:bold;">✅ 生成されました！下記をクライアントに送付してください</p>
                     <div id="share-url-text" style="margin-top: 10px; padding: 10px; background-color: #fff; border-radius: 6px; border: 1px solid #ccc; font-size: 0.8rem; word-break: break-all; color:#555;"></div>
                 </div>
+
+                <hr style="margin: 30px 0; border: none; border-top: 2px dashed #f7d2d9;">
+
+                <h3 style="color: var(--primary-color);">👥 クライアント・ダッシュボード</h3>
+                <p style="font-size: 0.85rem; color: #666;">スプレッドシート上の全てのクライアントの進捗データを読み込みます。</p>
+                <button id="dashboard-sync-btn" class="secondary-btn bouncy-btn" style="width: 100%; padding: 12px; margin-top: 15px; font-size: 1rem;">🔄 顧客データをスプレッドシートから読み込む</button>
+
+                <!-- クライアント一覧リスト -->
+                <div id="dashboard-client-list" class="dashboard-list" style="margin-top: 20px;">
+                    <!-- ここにカードがJSで生成される -->
+                </div>
             </div>
 
         </div><!-- /settings-panel -->
+
+        <!-- ダッシュボードのクライアント詳細モーダル -->
+        <div id="dashboard-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <button id="close-modal-btn" class="modal-close-btn">✖️ 閉じる</button>
+                <div id="modal-body" style="margin-top: 10px;">
+                    <!-- 読み込んだデータが展開される -->
+                </div>
+            </div>
+        </div>
 
         <div id="toast" class="toast">保存しました</div>
     </div>

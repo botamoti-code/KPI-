@@ -648,4 +648,177 @@ document.addEventListener('DOMContentLoaded', () => {
             appSettings.webhookUrl = hookUrl;
         });
     }
+
+    // -----------------------------------------
+    // ダッシュボード・クライアントデータ同期 (JSONP)
+    // -----------------------------------------
+    const syncBtn = document.getElementById('dashboard-sync-btn');
+    const clientListContainer = document.getElementById('dashboard-client-list');
+    const modal = document.getElementById('dashboard-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalBody = document.getElementById('modal-body');
+
+    // キャッシュ用
+    let globalClientsData = [];
+
+    // グローバルにJSONPコールバック関数を登録
+    window.dashboardJsonpCallback = function(data) {
+        if (syncBtn) {
+            syncBtn.textContent = '🔄 顧客データをスプレッドシートから読み込む';
+            syncBtn.disabled = false;
+        }
+
+        if (data.status === "success" && data.clients) {
+            globalClientsData = data.clients;
+            renderClientList(globalClientsData);
+            displayToast('データを同期しました！');
+        } else {
+            alert('データの取得に失敗しました。');
+        }
+    };
+
+    if (syncBtn) {
+        syncBtn.addEventListener('click', () => {
+            const hookUrl = appSettings.webhookUrl;
+            if (!hookUrl) {
+                alert('先にWebhook URLを設定してください。');
+                return;
+            }
+
+            syncBtn.textContent = '⏳ 読み込み中...';
+            syncBtn.disabled = true;
+
+            // JSONPでリクエストを送信 (GASはCORSでブロックされやすいためJSONPを使用)
+            const script = document.createElement('script');
+            // GASのURLにコールバックパラメータを追加（既存のパラメータの有無を見分ける）
+            const separator = hookUrl.indexOf('?') === -1 ? '?' : '&';
+            script.src = hookUrl + separator + 'callback=dashboardJsonpCallback';
+            
+            script.onerror = () => {
+                alert('通信エラーが発生しました。URLが正しいか、GETリクエストが許可されているか確認してください。');
+                syncBtn.textContent = '🔄 顧客データをスプレッドシートから読み込む';
+                syncBtn.disabled = false;
+            };
+
+            document.body.appendChild(script);
+            
+            // 実行後スクリプトタグは不要なので消す
+            script.onload = () => {
+                document.body.removeChild(script);
+            };
+        });
+    }
+
+    // クライアント一覧を描画
+    function renderClientList(clients) {
+        clientListContainer.innerHTML = '';
+        if (clients.length === 0) {
+            clientListContainer.innerHTML = '<p style="color:#666; font-size:0.9rem;">まだクライアントのデータがありません。</p>';
+            return;
+        }
+
+        clients.forEach(client => {
+            const card = document.createElement('div');
+            card.className = 'client-card';
+            card.innerHTML = `
+                <h4>${client.clientName || '名無し'}</h4>
+                <div class="goal-text">🎯 目標：${client.currentGoal || '未設定'}</div>
+                <div class="date-text">最終更新：${client.lastUpdated}</div>
+            `;
+            // カードタップで詳細モーダルを開く
+            card.addEventListener('click', () => {
+                openClientDetails(client);
+            });
+            clientListContainer.appendChild(card);
+        });
+    }
+
+    // クライアント詳細をモーダルに描画
+    function openClientDetails(client) {
+        const rawData = client.sheetData; // 二次元配列
+        if (!rawData || rawData.length === 0) return;
+
+        let html = `<h2 style="color:var(--primary-color); margin-bottom: 15px; border-bottom:2px solid #fbe6ea; padding-bottom:10px;">📋 ${client.clientName} 様のカルテ</h2>`;
+        
+        let i = 0;
+        while (i < rawData.length) {
+            const row = rawData[i];
+            
+            // セクションヘッダーを探す
+            if (row[0] && typeof row[0] === 'string' && row[0].indexOf('【') === 0) {
+                html += `<div class="modal-section">`;
+                html += `<h4>${row[0]}</h4>`;
+                
+                // 次の行から詳細を見る
+                i++;
+                let tableStarted = false;
+                
+                while (i < rawData.length) {
+                    const nextRow = rawData[i];
+                    // 次のセクション見出しが来たらbreak
+                    if (nextRow[0] && typeof nextRow[0] === 'string' && nextRow[0].indexOf('【') === 0) {
+                        break;
+                    }
+                    
+                    // 空行は読み飛ばすが、表が終わったかどうかの判定には使えるかも
+                    if (!nextRow[0]) {
+                        if (tableStarted) {
+                            html += `</table></div>`;
+                            tableStarted = false;
+                        }
+                    } else if (nextRow[0] === "月" || nextRow[0] === "記録された時間") {
+                        // 表のヘッダーが来たらテーブル開始
+                        html += `<div style="overflow-x:auto;"><table class="modal-table"><thead><tr>`;
+                        nextRow.forEach(cel => {
+                            if(cel) html += `<th>${cel}</th>`;
+                        });
+                        html += `</tr></thead><tbody>`;
+                        tableStarted = true;
+                    } else {
+                        // 通常の行
+                        if (tableStarted) {
+                            html += `<tr>`;
+                            nextRow.forEach((cel, idx) => {
+                                // 存在する列数だけ
+                                if (idx < rawData[i - 1].length && rawData[i - 1][idx]) {
+                                    html += `<td>${cel}</td>`;
+                                }
+                            });
+                            html += `</tr>`;
+                        } else {
+                            // 表じゃないデータ（氏名：山田など）
+                            if (nextRow[0] && nextRow[1]) {
+                                html += `<p style="margin-bottom:5px; font-size:0.9rem;"><strong>${nextRow[0]}</strong> ${nextRow[1]}</p>`;
+                            }
+                        }
+                    }
+                    i++;
+                }
+                
+                if (tableStarted) {
+                    html += `</tbody></table></div>`;
+                }
+                html += `</div>`;
+            } else {
+                i++;
+            }
+        }
+
+        modalBody.innerHTML = html;
+        modal.style.display = 'flex';
+    }
+
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+    }
+
+    // モーダルの外側クリックで閉じる
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
 });

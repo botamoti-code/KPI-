@@ -642,7 +642,134 @@ tbody tr:hover {
     border-color: #ffb3c1 transparent transparent transparent;
 }
 
+
 .praise-tooltip.show {
     opacity: 1;
     transform: translateX(-50%) translateY(-5px);
+}
+
+/* =========================================================
+   ダッシュボード＆モーダル デザイン
+========================================================= */
+.dashboard-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.client-card {
+    background-color: #fff;
+    border: 2px solid #fbe6ea;
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(178, 45, 53, 0.05);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.client-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(178, 45, 53, 0.15);
+    border-color: #f7d2d9;
+    background-color: #fdfafb;
+}
+
+.client-card h4 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.client-card .goal-text {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 8px;
+    background: #f4f4f4;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.client-card .date-text {
+    font-size: 0.75rem;
+    color: #999;
+    text-align: right;
+}
+
+/* モーダルオーバーレイ */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: var(--bg-color);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    border: 2px solid #e5dcc0;
+}
+
+.modal-close-btn {
+    position: sticky;
+    top: 0;
+    float: right;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.modal-close-btn:hover {
+    background: #fbe6ea;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.modal-section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #e5dcc0;
+}
+
+.modal-section h4 {
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.modal-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+.modal-table th, .modal-table td {
+    padding: 6px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+.modal-table th {
+    background-color: rgba(161, 136, 85, 0.1);
+    white-space: nowrap;
 }
